@@ -6,6 +6,7 @@
 
 <script>
 import BScroll from 'better-scroll'
+
 export default {
     props: {
         //probeType: 1 滚动的时候会派发scroll事件，会截流。2 滚动的时候实时派发scroll事件，不会截流 3 除了实时派发scroll事件，在swipe的情况下仍然能实时派发scroll事件
@@ -40,40 +41,45 @@ export default {
             default: 20
         }
     },
-    mounted(){
-        setTimeout(() => {
-            this._initScroll()
-        }, this.refreshDelay);
+    mounted() {
+        setTimeout(() => {  //确保DOM已经渲染
+            this. _initScroll()
+        }, 20)
     },
     methods: {
-        _initScroll(){
+        _initScroll() {
             if(!this.$refs.wrapper){
                 return
             }
             this.scroll = new BScroll(this.$refs.wrapper, {
-                probeType: this.probeType,
+                probeType : this.probeType,
                 click: this.click
             })
-            if(this.listenScroll){
-                let me = this
-                this.scroll.on('scroll', (pos) => {
+
+            if(this.listenScroll) {
+                let me = this            //箭头函数中代理this
+                this.scroll.on('scroll', (pos) => {  //监听scroll事件，拿到pos位置对象：有x和y属性
                     me.$emit('scroll', pos)
                 })
             }
-            if(this.pullup){
-                this.scroll.on('scrollEnd', () => {
-                    if(this.scroll.y <= (this.scroll.maxScrollY +50)){
+
+            if(this.pullup) { 
+               this.scroll.on('scrollEnd', () => {
+                    // 当滚动距离小于等于最大的滚动条的距离 + 50 的时候，向外传递一个scrollToEnd的事件
+                    if(this.scroll.y <= (this.scroll.maxScrollY + 50)) { 
                         this.$emit('scrollToEnd')
                     }
-                })
+               })
             }
-            if(this.beforeScroll){
+
+            if(this.beforeScroll) {
                 this.scroll.on('beforeScrollStart', () => {
                     this.$emit('beforeScroll')
                 })
             }
         },
-        enable(){
+        enable() {
+            // 启用 better-scroll，默认开启
             this.scroll && this.scroll.enable()
         },
         disable() {
@@ -94,11 +100,15 @@ export default {
         }
     },
     watch: {
-        data(){
+        data() { //监测data的变化
             setTimeout(() => {
-                this.refresh
-            }, this.refreshDelay);
+                this.refresh()
+            }, this.refreshDelay)
         }
     }
 }
 </script>
+
+<style lang="stylus" scoped>
+
+</style>

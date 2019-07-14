@@ -1,163 +1,164 @@
 <template>
-    <div class="slider" ref="slider">
-      <div class="slider-group" ref="sliderGroup">
-        <slot>
-        </slot>
-      </div>
-      <div class="dots">
-        <span class="dot" :key="index" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots"></span>
-      </div>
+  <div class="slider" ref="slider">
+    <div class="slider-group" ref="sliderGroup">
+      <slot>
+      </slot>
     </div>
+    <div class="dots">
+      <span class="dot" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots"></span>
+    </div>
+  </div>
 </template>
-  
-<script >
-import {addClass} from 'common/js/dom'
-import BScroll from 'better-scroll'
 
-export default {
+<script type="text/ecmascript-6">
+  import {addClass} from 'common/js/dom'
+  import BScroll from 'better-scroll'
+
+  export default {
     name: 'slider',
     props: {
-    loop: {
+      loop: {
         type: Boolean,
         default: true
-    },
-    autoPlay: {
+      },
+      autoPlay: {
         type: Boolean,
         default: true
-    },      
-    threshold: {
+      },      
+      threshold: {
         type: Number,
         default: 0.3
-    },
-    speed: {
+      },
+      speed: {
         type: Number,
         default: 400
-    },
-    interval: {
+      },
+      interval: {
         type: Number,
         default: 3000
-    }
+      }
     },
     data() {
-    return {
+      return {
         dots: [],
         currentPageIndex: 0
-    }
+      }
     },
     mounted() {
-    setTimeout(() => {
+      setTimeout(() => {
         this._setSliderWidth()
         this._initDots()
         this._initSlider()
 
         if (this.autoPlay) {
-        this._play()
+          this._play()
         }
-    }, 20)
+      }, 20)
 
-    window.addEventListener('resize', () => {
+      window.addEventListener('resize', () => {
         if (!this.slider) {
-        return
+          return
         }
         this._setSliderWidth(true)
         this.slider.refresh()
-    })
+      })
     },
     destroyed() {
-    clearTimeout(this.timer)
+      clearTimeout(this.timer)
     },
     methods: {
-    _setSliderWidth(isResize) {
+      _setSliderWidth(isResize) {
+        console.log(1)
         this.children = this.$refs.sliderGroup.children
 
         let width = 0
         let sliderWidth = this.$refs.slider.clientWidth
         for (let i = 0; i < this.children.length; i++) {
-        let child = this.children[i]
-        addClass(child, 'slider-item')
+          let child = this.children[i]
+          addClass(child, 'slider-item')
 
-        // console.log(child.className)
+          // console.log(child.className)
 
-        child.style.width = sliderWidth + 'px'
-        width += sliderWidth
+          child.style.width = sliderWidth + 'px'
+          width += sliderWidth
         }
         if (this.loop && !isResize) {
-        width += 2 * sliderWidth
+          width += 2 * sliderWidth
         }
         this.$refs.sliderGroup.style.width = width + 'px'
-    },
-    _initSlider() {
+      },
+      _initSlider() {
         this.slider = new BScroll(this.$refs.slider, {
-        scrollX: true,
-        scrollY: false,
-        momentum: false,
-        snap:{
+          scrollX: true,
+          scrollY: false,
+          momentum: false,
+          snap:{
             loop: this.loop,
             threshold: this.threshold,
             speed: this.speed
-        }
+          }
         })
 
         this.slider.on('scrollEnd', () => {
-        this.currentPageIndex = this.slider.getCurrentPage().pageX
-        
+          this.currentPageIndex = this.slider.getCurrentPage().pageX
+          
 
-        if (this.autoPlay) {
+          if (this.autoPlay) {
             clearTimeout(this.timer)
             this._play()
-        }
+          }
         })
-    },
-    _initDots() {
+      },
+      _initDots() {
         this.dots = new Array(this.children.length)
-    },
-    _play() {
+      },
+      _play() {
         this.timer = setTimeout(() => {
-        this.slider.next();
+          this.slider.next();
         }, this.interval)
+      }
     }
-    }
-}
+  }
 </script>
-  
-  <style scoped lang="stylus" rel="stylesheet/stylus">
-    @import "~common/stylus/variable"
-  
-    .slider
-      min-height: 1px
-      .slider-group
-        position: relative
+
+<style scoped lang="stylus" rel="stylesheet/stylus">
+  @import "~common/stylus/variable"
+
+  .slider
+    min-height: 1px
+    .slider-group
+      position: relative
+      overflow: hidden
+      white-space: nowrap
+      .slider-item
+        float: left
+        box-sizing: border-box
         overflow: hidden
-        white-space: nowrap
-        .slider-item
-          float: left
-          box-sizing: border-box
-          overflow: hidden
-          text-align: center
-          a
-            display: block
-            width: 100%
-            overflow: hidden
-            text-decoration: none
-          img
-            display: block
-            width: 100%
-      .dots
-        position: absolute
-        right: 0
-        left: 0
-        bottom: 12px
         text-align: center
-        font-size: 0
-        .dot
-          display: inline-block
-          margin: 0 4px
-          width: 8px
-          height: 8px
-          border-radius: 50%
-          background: $color-text-l
-          &.active
-            width: 20px
-            border-radius: 5px
-            background: $color-text-ll
-  </style>
+        a
+          display: block
+          width: 100%
+          overflow: hidden
+          text-decoration: none
+        img
+          display: block
+          width: 100%
+    .dots
+      position: absolute
+      right: 0
+      left: 0
+      bottom: 12px
+      text-align: center
+      font-size: 0
+      .dot
+        display: inline-block
+        margin: 0 4px
+        width: 8px
+        height: 8px
+        border-radius: 50%
+        background: $color-text-l
+        &.active
+          width: 20px
+          border-radius: 5px
+          background: $color-text-ll
+</style>
