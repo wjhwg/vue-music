@@ -4,8 +4,12 @@ import App from './App.vue'
 import 'common/stylus/index.styl'
 import router from './router'
 import store from './store'
+import VueLazyload from 'vue-lazyload'
 
 Vue.config.productionTip = false
+Vue.use(VueLazyload, {
+  loading: require('common/image/default.png')
+})
 
 new Vue({
   router,
