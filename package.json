@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.3.0",
-    "@vue/cli-service": "^3.3.0",
+    "@vue/cli-service": "^5.0.8",
     "babel-polyfill": "^6.26.0",
     "eslint-friendly-formatter": "^4.0.1",
     "express": "^4.16.4",
